@@ -1,14 +1,14 @@
-%-------------------------------------------------------------------------
-%                       DM FLIGHT MECHANIC
-%-------------------------------------------------------------------------
-%
-%   Full name : Quentin Gourier
-%   Class : A4 SET1
-%   Assignment code : Aé421 (P. Yazigi)
-%
-%-------------------------------------------------------------------------
-%                             DATA
-%-------------------------------------------------------------------------
+% %-------------------------------------------------------------------------
+% %                       DM FLIGHT MECHANIC
+% %-------------------------------------------------------------------------
+% %
+% %   Full name : Quentin Gourier
+% %   Class : A4 SET1
+% %   Assignment code : Aé421 (P. Yazigi)
+% %
+% %-------------------------------------------------------------------------
+% %                             DATA
+% %-------------------------------------------------------------------------
 
 g = 9.81; %gravity
 
@@ -113,9 +113,9 @@ M_delta_t = ((0.5*rho*U0^2*S*c_bar)/(I_yy*U0))*C_m_delta_t;
 
 
 
-%-------------------------------------------------------------------------
-%                   LONGITUDINAL STABILITY PART 
-%-------------------------------------------------------------------------
+% %-------------------------------------------------------------------------
+% %                   LONGITUDINAL STABILITY PART 
+% %-------------------------------------------------------------------------
 
 % 1. Equations of longitudinal motion ?
 % See the values above and write it on.
@@ -153,29 +153,18 @@ ksi = [-real(lambda_1)/omega(1) -real(lambda_3)/omega(2)];
 ksi_sp = max(ksi)
 ksi_p = min(ksi)
 
-t = linspace(0,100);
-t2 = linspace(0,20);
+t = linspace(0,400);
+t2 = linspace(0,10);
 
 u = exp(-omega_n_p*ksi_p*t).*(U0/10*cos(omega_n_p*sqrt(1-ksi_p^2)*t)+10*omega_n_p*ksi_p/(omega_n_p*sqrt(1-ksi_p^2))*sin(omega_n_p*sqrt(1-ksi_p^2)*t));
 theta = exp(-omega_n_p*ksi_p*t).*(theta_0/10*cos(omega_n_p*sqrt(1-ksi_p^2)*t)+theta_0*ksi_p*omega_n_p/(omega_n_p*sqrt(1-ksi_p^2))*sin(omega_n_p*sqrt(1-ksi_p^2)*t));
 w = exp(-omega_n_sp*ksi_sp*t2).*(omega_0/10*cos(omega_n_sp*sqrt(1-ksi_sp^2)*t2)+10*ksi_sp*omega_n_sp/(omega_n_sp*sqrt(1-ksi_sp^2))*sin(omega_n_sp*sqrt(1-ksi_sp^2)*t2));
 q = exp(-omega_n_sp*ksi_sp*t2).*(theta_0/10*cos(omega_n_sp*sqrt(1-ksi_sp^2)*t2)+theta_0*ksi_sp*omega_n_sp/(omega_n_sp*sqrt(1-ksi_sp^2))*sin(omega_n_sp*sqrt(1-ksi_sp^2)*t2));
 
-sp_mode = w + q;
-phugoid_mode = u + theta;
-
 % 5. Different modes of longitudinal stability
 % a. Short period mode
-figure
-plot(t, sp_mode);
-legend({'(natural freq and damping factor)'})
-title('Short period mode');
-
 % b. Phugoid mode
-figure
-plot(t, phugoid_mode);
-legend({'(natural freq and damping factor)'})
-title('Phugoid mode');
+
 
 % 6. Curves of longitudinal motion
 % a. Axial velocity i function of time
@@ -183,24 +172,36 @@ figure
 plot(t, u);
 legend({'u(t)'})
 title('Axial velocity impulse-time response');
+xlabel("Time (s)");
+ylabel("Axial velocity");
+grid("minor");
 
 % b. Angle of attack
 figure
 plot(t2, w);
 legend({'w(t)'})
 title('Angle of attack impulse-time response');
+xlabel("Time (s)");
+ylabel("Angle of attack");
+grid("minor");
 
 % c. Pitch rate
 figure
 plot(t2, q);
 legend({'q(t)'})
 title('Pitch rate impulse-time response');
+xlabel("Time (s)");
+ylabel("Pitch rate");
+grid("minor");
 
 % d. Pitch angle
 figure
 plot(t, theta);
 legend({'theta(t)'})
 title('Pitch angle impulse-time response');
+xlabel("Time (s)");
+ylabel("Pitch angle");
+grid("minor");
 
 
 
@@ -209,17 +210,24 @@ title('Pitch angle impulse-time response');
 s = tf('s');
 I = eye(size(A));
 TF = zpk((s*I-A)\B)
+figure
+bode(TF(1,1))
+figure
+bode(TF(2,1))
+figure
+bode(TF(3,1))
+figure
+bode(TF(4,1))
 
 
 
 
-%-------------------------------------------------------------------------
-%                   LATERAL STABILITY PART 
-%-------------------------------------------------------------------------
+% %-------------------------------------------------------------------------
+% %                   LATERAL STABILITY PART 
+% %-------------------------------------------------------------------------
 
 % 1. Equations of longitudinal motion ?
 % See the values above and write it on.
-
 
 % 2. The matrix A of aircraft ?
 
@@ -244,19 +252,21 @@ lambda_dutch_roll_2 = val_propre(2,2)
 lambda_roll = val_propre(1,1)
 lambda_spiral = val_propre(4,4)
  
-% omega_n_dutch_roll = sqrt(real(lambda_dutch_roll_1)^2+imag(lambda_dutch_roll_1)^2)
+omega_n_dutch_roll = sqrt(real(lambda_dutch_roll_1)^2+imag(lambda_dutch_roll_1)^2)
 omega_n_dutch_roll = sqrt(lambda_dutch_roll_1*lambda_dutch_roll_2)
-% ksi_dutch_roll = -real(lambda_dutch_roll_1)/omega_n_dutch_roll
+ksi_dutch_roll = -real(lambda_dutch_roll_1)/omega_n_dutch_roll
 ksi_dutch_roll = (lambda_dutch_roll_1+lambda_dutch_roll_2)/(2*omega_n_dutch_roll)
 
-% % omega_n_dutch_roll = sqrt(Yv*Nr+Nv*(U0-Yr));
-% % ksi_dutch_roll = -(Yv+Nr)/(2*omega_n_dutch_roll);
+% omega_n_dutch_roll = sqrt(Yv*Nr+Nv*(U0-Yr));
+% ksi_dutch_roll = -(Yv+Nr)/(2*omega_n_dutch_roll);
 
 % 5. Different modes of lateral stability
+% omega and ksi
+
+% 6. Curves of longitudinal motion
 % a. spiral mode
-t2 = linspace(0,1000);
+t2 = linspace(0,350);
 figure; hold on;
-xlim([0 1000]);
 sm1 = vect_propre(1,4)*exp(lambda_spiral*t2);
 sm2 = vect_propre(2,4)*exp(lambda_spiral*t2);
 sm3 = vect_propre(3,4)*exp(lambda_spiral*t2);
@@ -267,6 +277,8 @@ plot(t2, sm3)
 plot(t2, sm4)
 legend({'roll angle', 'yaw rate', 'side slip', 'roll rate'});
 title('Spiral mode');
+grid("minor");
+xlabel("time (seconds)");
 
 % b. rolling mode
 t1 = linspace(0,10);
@@ -283,7 +295,8 @@ plot(t1,rm3)
 plot(t1,rm4)
 legend({'side velocity', 'roll rate', 'yaw rate', 'side angle'})
 title('Rolling mode');
-
+grid("minor");
+xlabel("time (seconds)");
 
 % c. dutch roll mode
 t3 = linspace(0,50);
@@ -300,48 +313,53 @@ plot(t3, dr3)
 plot(t3, dr4)
 legend({'side velocity', 'roll rate', 'yaw rate', 'side angle'});
 title('Dutch roll mode');
+grid("minor");
+xlabel("time (seconds)");
 
+% Stability balance data part
+% We precise these values have been choosen with adjustment
+new_omega_n_dutch_roll = 1.2;
+new_ksi_dutch_roll = 0.24;
+k1 = -284.6;
+k2 = 6.45;
+new_lambda_dutch_roll_1 = -0.288 -1.165i;
+new_lambda_dutch_roll_2 = -0.288 +1.165i;
 
-t = linspace(0, 100);
-t2 = linspace(0, 20);
-
-u = exp(-omega_n_dutch_roll*ksi_dutch_roll*t).*(U0/10*cos(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2)*t)+10*omega_n_dutch_roll*ksi_dutch_roll/(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2))*sin(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2)*t));
-theta = exp(-omega_n_dutch_roll*ksi_dutch_roll*t).*(theta_0/10*cos(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2)*t)+theta_0*ksi_dutch_roll*omega_n_dutch_roll/(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2))*sin(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2)*t));
-w = exp(-omega_n_dutch_roll*ksi_dutch_roll*t2).*(omega_0/10*cos(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2)*t2)+10*ksi_dutch_roll*omega_n_dutch_roll/(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2))*sin(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2)*t2));
-q = exp(-omega_n_dutch_roll*ksi_dutch_roll*t2).*(theta_0/10*cos(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2)*t2)+theta_0*ksi_dutch_roll*omega_n_dutch_roll/(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2))*sin(omega_n_dutch_roll*sqrt(1-ksi_dutch_roll^2)*t2));
-
-
-% 6. Curves of longitudinal motion
-% a. Axial velocity i function of time
-figure
-plot(t, u);
-legend({'u(t)'})
-title('Side velocity impulse-time response');
-
-% b. Angle of attack
-figure
-plot(t2, w);
-legend({'w(t)'})
-title('Roll rate impulse-time response');
-
-% c. Pitch rate
-figure
-plot(t2, q);
-legend({'q(t)'})
-title('Yaw rate impulse-time response');
-
-% d. Pitch angle
-figure
-plot(t, theta);
-legend({'theta(t)'})
-title('Side angle impulse-time response');
-
+t3= linspace(0,20);
+figure; hold on;
+new_dr1 = vect_propre(1,2).*exp(real(new_lambda_dutch_roll_1)*t3).*(cos(new_omega_n_dutch_roll.*t3)+new_ksi_dutch_roll*sin(new_omega_n_dutch_roll.*t3));
+new_dr2 = vect_propre(2,2).*exp(real(new_lambda_dutch_roll_1)*t3).*(cos(new_omega_n_dutch_roll.*t3)+new_ksi_dutch_roll*sin(new_omega_n_dutch_roll.*t3));
+new_dr3 = vect_propre(3,2).*exp(real(new_lambda_dutch_roll_1)*t3).*(cos(new_omega_n_dutch_roll.*t3)+new_ksi_dutch_roll*sin(new_omega_n_dutch_roll.*t3));
+new_dr4 = vect_propre(4,2).*exp(real(new_lambda_dutch_roll_1)*t3).*(cos(new_omega_n_dutch_roll.*t3)+new_ksi_dutch_roll*sin(new_omega_n_dutch_roll.*t3));
+plot(t3, new_dr1)
+plot(t3, new_dr2)
+plot(t3, new_dr3)
+plot(t3, new_dr4)
+legend({'side velocity', 'roll rate', 'yaw rate', 'side angle'});
+title('Balanced dutch roll mode');
+grid("minor");
+xlabel("time (seconds)");
 
 % 7. TFs of each variable
 s = tf('s');
 I = eye(size(A));
-TF = zpk((s*I-A)\B)
+TF = zpk((s*I-A)\B);
+figure
+bode(TF(1,1))
+figure
+bode(TF(2,1))
+figure
+bode(TF(3,1))
+figure
+bode(TF(4,1))
+figure
+bode(TF(1,2))
+figure
+bode(TF(2,2))
+figure
+bode(TF(3,2))
+figure
+bode(TF(4,2))
 
 
-
-
+%END OF TP
